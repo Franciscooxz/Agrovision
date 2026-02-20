@@ -1,5 +1,6 @@
 const Crop = require("../models/Crop");
 const Analysis = require("../models/Analysis");
+const sendResponse = require("../utils/sendResponse");
 
 exports.getMetrics = async (req, res) => {
   try {
@@ -44,7 +45,7 @@ exports.getMetrics = async (req, res) => {
         ? analyses.reduce((acc, curr) => acc + curr.confidence, 0) / analyses.length
         : 0;
 
-    res.json({
+    return sendResponse(res, 200, true, "Dashboard metrics fetched successfully", {
       totalCrops,
       totalAnalyses,
       healthyCrops,
@@ -55,6 +56,6 @@ exports.getMetrics = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error fetching dashboard metrics" });
+    return sendResponse(res, 500, false, "Error fetching dashboard metrics");
   }
 };

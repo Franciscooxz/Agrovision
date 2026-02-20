@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 const Sensor = require("../models/Sensor");
 const { protect, authorize } = require("../middleware/authMiddleware");
+const sendResponse = require("../utils/sendResponse");
 
 // SOLO USUARIOS AUTENTICADOS PUEDEN VER
 router.get("/", protect, async (req, res) => {
   const sensors = await Sensor.find().sort({ createdAt: -1 });
-  res.json(sensors);
+  return sendResponse(res, 200, true, "Sensors fetched successfully", sensors);
 });
 
 // SOLO ADMIN PUEDE CREAR DATOS
@@ -16,7 +17,7 @@ router.post("/", protect, authorize("admin"), async (req, res) => {
   const io = req.app.get("io");
   io.emit("newSensorData", sensor);
 
-  res.status(201).json(sensor);
+  return sendResponse(res, 201, true, "Sensor created successfully", sensor);
 });
 
 module.exports = router;

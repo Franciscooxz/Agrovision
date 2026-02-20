@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const sendResponse = require("../utils/sendResponse");
 
 // GENERAR TOKEN
 const generateToken = (id) => {
@@ -18,17 +19,13 @@ exports.register = async (req, res) => {
 
     // Validaciones básicas
     if (!name || !email || !password) {
-      return res.status(400).json({
-        message: "Todos los campos son obligatorios",
-      });
+      return sendResponse(res, 400, false, "Todos los campos son obligatorios");
     }
 
     // Verificar si ya existe
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({
-        message: "El usuario ya existe",
-      });
+      return sendResponse(res, 400, false, "El usuario ya existe");
     }
 
     // Hash password
@@ -42,8 +39,7 @@ exports.register = async (req, res) => {
       role: role || "user",
     });
 
-    res.status(201).json({
-      message: "Usuario registrado correctamente",
+    return sendResponse(res, 201, true, "Usuario registrado correctamente", {
       user: {
         id: user._id,
         name: user.name,
@@ -52,9 +48,7 @@ exports.register = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
+    return sendResponse(res, 500, false, error.message);
   }
 };
 
@@ -69,18 +63,14 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({
-        message: "Credenciales inválidas",
-      });
+      return sendResponse(res, 401, false, "Credenciales inválidas");
     }
 
     // Comparar password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(401).json({
-        message: "Credenciales inválidas",
-      });
+      return sendResponse(res, 401, false, "Credenciales inválidas");
     }
 
     // Generar token
@@ -94,9 +84,8 @@ exports.login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.json({
-      message: "Login exitoso",
-      token, // opcional si frontend lo usa
+    return sendResponse(res, 200, true, "Login exitoso", {
+      token,
       user: {
         id: user._id,
         name: user.name,
@@ -106,9 +95,7 @@ exports.login = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
+    return sendResponse(res, 500, false, error.message);
   }
 };
 
@@ -121,14 +108,12 @@ exports.login = async (req, res) => {
       expires: new Date(0),
     });
 
-    res.json({
-      message: "Sesión cerrada correctamente",
-    });
+    return sendResponse(res, 200, true, "Sesión cerrada correctamente");
   };
 
   // ===============================
   // GET USER PROFILE
   // ===============================
   exports.getMe = async (req, res) => {
-    res.json(req.user);
+    return sendResponse(res, 200, true, "Perfil obtenido correctamente", req.user);
   };
