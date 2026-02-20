@@ -1,4 +1,5 @@
 const Parcel = require('../models/Parcel');
+const sendResponse = require("../utils/sendResponse");
 
 exports.createParcel = async (req, res, next) => {
   try {
@@ -7,7 +8,7 @@ exports.createParcel = async (req, res, next) => {
       owner: req.user.id
     });
 
-    res.status(201).json(parcel);
+    return sendResponse(res, 201, true, "Parcel created successfully", parcel);
   } catch (error) {
     next(error);
   }
@@ -16,7 +17,7 @@ exports.createParcel = async (req, res, next) => {
 exports.getParcels = async (req, res, next) => {
   try {
     const parcels = await Parcel.find({ owner: req.user.id });
-    res.json(parcels);
+    return sendResponse(res, 200, true, "Parcels fetched successfully", parcels);
   } catch (error) {
     next(error);
   }

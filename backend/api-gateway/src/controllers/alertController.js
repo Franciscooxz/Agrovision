@@ -1,4 +1,5 @@
 const Alert = require("../models/Alert");
+const sendResponse = require("../utils/sendResponse");
 
 exports.getUserAlerts = async (req, res) => {
   try {
@@ -8,9 +9,9 @@ exports.getUserAlerts = async (req, res) => {
       .populate("crop", "name")
       .sort({ createdAt: -1 });
 
-    res.json(alerts);
+    return sendResponse(res, 200, true, "Alerts fetched successfully", alerts);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching alerts" });
+    return sendResponse(res, 500, false, "Error fetching alerts");
   }
 };
 
@@ -23,11 +24,11 @@ exports.resolveAlert = async (req, res) => {
     );
 
     if (!alert) {
-      return res.status(404).json({ message: "Alert not found" });
+      return sendResponse(res, 404, false, "Alert not found");
     }
 
-    res.json(alert);
+    return sendResponse(res, 200, true, "Alert resolved successfully", alert);
   } catch (error) {
-    res.status(500).json({ message: "Error resolving alert" });
+    return sendResponse(res, 500, false, "Error resolving alert");
   }
 };

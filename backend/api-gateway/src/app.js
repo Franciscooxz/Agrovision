@@ -12,6 +12,7 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const alertRoutes = require("./routes/alertRoutes");
 
 const sensorRoutes = require("./routes/sensorRoutes");
+const sendResponse = require("./utils/sendResponse");
 
 const app = express();
 
@@ -28,7 +29,7 @@ app.use("/api/sensors", sensorRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).json({ message: 'Server error' });
+  return sendResponse(res, 500, false, "Server error");
 });
 
 module.exports = app;

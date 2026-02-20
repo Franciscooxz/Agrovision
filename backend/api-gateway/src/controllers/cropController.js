@@ -4,6 +4,7 @@ const Alert = require("../models/Alert");
 const { analyzeCrop } = require("../services/aiService");
 const User = require("../models/User");
 const { sendAlertEmail } = require("../services/emailService");
+const sendResponse = require("../utils/sendResponse");
 
 
 // Crear cultivo + análisis + alerta automática
@@ -51,14 +52,14 @@ exports.createCrop = async (req, res) => {
     await sendAlertEmail(user.email, crop.name);
     }
 
-    res.status(201).json({
+    return sendResponse(res, 201, true, "Crop created successfully", {
       crop,
       analysis: analysisRecord,
     });
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error creating crop" });
+    return sendResponse(res, 500, false, "Error creating crop");
   }
 };
 
@@ -67,9 +68,9 @@ exports.createCrop = async (req, res) => {
 exports.getCrops = async (req, res) => {
   try {
     const crops = await Crop.find({ createdBy: req.user.id });
-    res.json(crops);
+    return sendResponse(res, 200, true, "Crops fetched successfully", crops);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching crops" });
+    return sendResponse(res, 500, false, "Error fetching crops");
   }
 };
 
@@ -83,12 +84,12 @@ exports.getCropById = async (req, res) => {
     });
 
     if (!crop) {
-      return res.status(404).json({ message: "Crop not found" });
+      return sendResponse(res, 404, false, "Crop not found");
     }
 
-    res.json(crop);
+    return sendResponse(res, 200, true, "Crop fetched successfully", crop);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching crop" });
+    return sendResponse(res, 500, false, "Error fetching crop");
   }
 };
 
@@ -102,17 +103,17 @@ exports.getCropAnalysisHistory = async (req, res) => {
     });
 
     if (!crop) {
-      return res.status(404).json({ message: "Crop not found" });
+      return sendResponse(res, 404, false, "Crop not found");
     }
 
     const analyses = await Analysis.find({
       crop: req.params.id,
     }).sort({ createdAt: -1 });
 
-    res.json(analyses);
+    return sendResponse(res, 200, true, "Analysis history fetched successfully", analyses);
 
   } catch (error) {
-    res.status(500).json({ message: "Error fetching analysis history" });
+    return sendResponse(res, 500, false, "Error fetching analysis history");
   }
 };
 
@@ -127,13 +128,13 @@ exports.updateCrop = async (req, res) => {
     );
 
     if (!crop) {
-      return res.status(404).json({ message: "Crop not found" });
+      return sendResponse(res, 404, false, "Crop not found");
     }
 
-    res.json(crop);
+    return sendResponse(res, 200, true, "Crop updated successfully", crop);
 
   } catch (error) {
-    res.status(500).json({ message: "Error updating crop" });
+    return sendResponse(res, 500, false, "Error updating crop");
   }
 };
 
@@ -147,7 +148,7 @@ exports.deleteCrop = async (req, res) => {
     });
 
     if (!crop) {
-      return res.status(404).json({ message: "Crop not found" });
+      return sendResponse(res, 404, false, "Crop not found");
     }
 
     // Eliminar análisis asociados
@@ -156,9 +157,14 @@ exports.deleteCrop = async (req, res) => {
     // Eliminar alertas asociadas
     await Alert.deleteMany({ crop: req.params.id });
 
-    res.json({ message: "Crop, analyses and alerts deleted successfully" });
+    return sendResponse(
+      res,
+      200,
+      true,
+      "Crop, analyses and alerts deleted successfully"
+    );
 
   } catch (error) {
-    res.status(500).json({ message: "Error deleting crop" });
+    return sendResponse(res, 500, false, "Error deleting crop");
   }
 };

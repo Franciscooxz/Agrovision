@@ -1,5 +1,6 @@
 const Crop = require("../models/Crop");
 const User = require("../models/User");
+const sendResponse = require("../utils/sendResponse");
 
 exports.checkCropLimit = async (req, res, next) => {
   try {
@@ -14,14 +15,12 @@ exports.checkCropLimit = async (req, res, next) => {
     });
 
     if (cropCount >= 3) {
-      return res.status(403).json({
-        message: "Free plan limit reached. Upgrade to PRO.",
-      });
+      return sendResponse(res, 403, false, "Free plan limit reached. Upgrade to PRO.");
     }
 
     next();
 
   } catch (error) {
-    res.status(500).json({ message: "Plan validation error" });
+    return sendResponse(res, 500, false, "Plan validation error");
   }
 };
