@@ -17,7 +17,13 @@ exports.protect = asyncHandler(async (req, res, next) => {
     return next(new AppError("No autorizado. Token no encontrado.", 401));
   }
 
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    return next(new AppError("Token inválido o expirado", 401));
+  }
+
   req.user = await User.findById(decoded.id).select("-password");
 
   if (!req.user) {
