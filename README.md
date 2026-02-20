@@ -1,138 +1,157 @@
-🌱 AgroVision – Plataforma IoT de Monitoreo Agrícola en Tiempo Real
-📌 Descripción General
+# 🌱 AgroVision
+
+Plataforma web full-stack de monitoreo agrícola en tiempo real que simula un sistema IoT inteligente para supervisión de cultivos.
+
+AgroVision permite visualizar datos de sensores, generar alertas automáticas cuando se superan umbrales críticos y gestionarlas desde un dashboard seguro con autenticación basada en roles.
+
+---
 
-AgroVision es una plataforma full-stack de monitoreo agrícola en tiempo real que simula un sistema IoT inteligente.
+## 🚀 Características Principales
 
-El sistema procesa datos de sensores, genera alertas automáticas basadas en umbrales críticos y proporciona un dashboard seguro multiusuario para su gestión.
+- 📡 Monitoreo de sensores en tiempo real (humedad y temperatura)
+- 📈 Visualización dinámica con Chart.js
+- 🚨 Generación automática de alertas por umbrales críticos
+- ✅ Resolución manual de alertas
+- 📜 Historial de alertas resueltas
+- 🌾 Filtro por cultivo
+- 🔐 Autenticación con JWT en cookies HTTP-only
+- 👤 Control de acceso por roles (admin / usuario)
+- 📦 Arquitectura modular y escalable
 
-Este proyecto demuestra:
+---
 
-Arquitectura basada en eventos
+## 🏗 Arquitectura del Sistema
 
-Comunicación en tiempo real con WebSockets
+### Flujo General
 
-Autenticación segura con JWT en cookies HTTP-only
+1. El sistema simula sensores cada 5 segundos.
+2. Los datos se almacenan en MongoDB.
+3. Se evalúan reglas de umbral:
+   - Humedad < 65%
+   - Temperatura > 30°C
+4. Si se detecta una condición crítica → se genera una alerta.
+5. Los datos y alertas se envían al frontend mediante WebSockets.
+6. El dashboard se actualiza en tiempo real sin necesidad de recargar la página.
 
-Control de acceso basado en roles
+---
 
-Diseño modular backend
+## ⚙️ Stack Tecnológico
 
-Dashboard interactivo con visualización dinámica de datos
+### Backend
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- Socket.io
+- JWT (cookies HTTP-only)
+- Arquitectura REST
 
-🏗 Arquitectura del Sistema
-Flujo general
+### Frontend
+- Next.js (App Router)
+- React
+- Chart.js
+- TailwindCSS
+- Socket.io-client
 
-Se simulan sensores cada 5 segundos.
+---
 
-Los datos se almacenan en MongoDB.
+## 🔐 Seguridad
 
-Se evalúan reglas de umbral:
+- JWT almacenado en cookies HTTP-only
+- Middleware de protección de rutas
+- Control de acceso basado en roles
+- Variables de entorno gestionadas mediante `.env`
+- Separación clara entre controladores, modelos y middleware
 
-Humedad < 65%
+---
 
-Temperatura > 30°C
+## 📊 Funcionalidades del Dashboard
 
-Si se detecta condición crítica → se genera alerta.
+- Visualización en tiempo real de métricas
+- Tarjetas con valores actuales
+- Gráficas dinámicas de sensores
+- Panel de alertas activas con indicador de severidad
+- Resolución manual de alertas
+- Historial de alertas resueltas
+- Panel exclusivo para administrador
 
-Los datos y alertas se emiten por WebSockets.
+---
 
-El frontend actualiza la interfaz en tiempo real sin recargar.
+## 📂 Estructura del Proyecto
 
-⚙️ Stack Tecnológico
-Backend
+Agrovision/
+│
+├── backend/
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   └── utils/
+│
+├── frontend/
+│   ├── app/
+│   ├── components/
+│   ├── context/
+│   └── services/
+│
+└── docker-compose.yml
 
-Node.js
+---
 
-Express.js
+## ⚙️ Instalación y Configuración
 
-MongoDB + Mongoose
+### 1️⃣ Clonar repositorio
 
-JWT (cookies HTTP-only)
+git clone https://github.com/Franciscooxz/Agrovision.git
+cd Agrovision
 
-Socket.io
+---
 
-Arquitectura REST
+### 2️⃣ Configurar Backend
 
-Frontend
+cd backend  
+npm install  
 
-Next.js (App Router)
+Crear archivo `.env`:
 
-React
+PORT=5000  
+MONGO_URI=tu_mongo_uri  
+JWT_SECRET=tu_jwt_secret  
 
-Chart.js
+Ejecutar servidor:
 
-TailwindCSS
+npm run dev  
 
-Socket.io-client
+---
 
-🔐 Seguridad
+### 3️⃣ Configurar Frontend
 
-JWT almacenado en cookies HTTP-only
+cd frontend  
+npm install  
+npm run dev  
 
-Middleware de protección de rutas
+---
 
-Control de acceso por roles (admin / usuario)
+## 🧠 Decisiones de Arquitectura
 
-Variables de entorno gestionadas con .env
+- Uso de WebSockets en lugar de polling para mayor eficiencia.
+- JWT en cookies HTTP-only para reducir riesgo de XSS.
+- Arquitectura modular para facilitar mantenimiento y escalabilidad.
+- Sistema de alertas basado en eventos.
+- Estructura preparada para futura integración con sensores físicos reales.
 
-Separación clara entre capas (controladores, modelos, middleware)
+---
 
-🚨 Sistema de Alertas
+## 🚀 Posibles Extensiones
 
-Modelo basado en eventos:
+- Integración con sensores reales (MQTT / hardware IoT)
+- Automatización de riego
+- Análisis predictivo
+- Arquitectura multi-tenant
+- Escalado horizontal con Redis para WebSockets
 
-Persistencia en base de datos
+---
 
-Emisión en tiempo real
-
-Resolución manual
-
-Historial de alertas
-
-Filtro por cultivo
-
-Aislamiento por usuario
-
-📊 Funcionalidades del Dashboard
-
-Visualización en tiempo real
-
-Gráficas dinámicas
-
-Panel de alertas activas
-
-Historial de alertas resueltas
-
-Filtro por cultivo
-
-Panel exclusivo para administrador
-
-🧠 Decisiones de Arquitectura
-
-WebSockets en lugar de polling para eficiencia y escalabilidad.
-
-JWT en cookies en vez de localStorage para reducir riesgo XSS.
-
-Separación de responsabilidades en backend.
-
-Sistema preparado para escalar hacia microservicios.
-
-Modelo adaptable a sensores reales (MQTT / hardware físico).
-
-🚀 Potencial de Escalabilidad
-
-La arquitectura permite:
-
-Integración con sensores reales
-
-Automatización de riego
-
-Análisis predictivo
-
-Multi-tenancy real
-
-Escalado horizontal con Redis para WebSockets
-
-👨‍💻 Autor
+## 👨‍💻 Autor
 
 Francisco
