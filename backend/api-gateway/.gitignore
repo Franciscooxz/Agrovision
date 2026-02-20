@@ -1,0 +1,55 @@
+# ========================
+# Node Modules
+# ========================
+node_modules/
+
+# ========================
+# Environment Variables
+# ========================
+.env
+.env.*
+!.env.example
+
+# ========================
+# Logs
+# ========================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ========================
+# Build / Dist
+# ========================
+dist/
+build/
+
+# ========================
+# Coverage
+# ========================
+coverage/
+
+# ========================
+# OS Files
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# IDE / Editor
+# ========================
+.vscode/
+.idea/
+*.swp
+
+# ========================
+# Temporary Files
+# ========================
+tmp/
+temp/
+
+# ========================
+# MongoDB local files (si usaras docker o data local)
+# ========================
+data/
