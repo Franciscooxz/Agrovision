@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import AlertPanel from '@/components/AlertPanel';
+import SensorChart from '@/components/SensorChart';
 import { getSocket, joinUserRoom } from '@/services/socket';
 import {
   ActivityIcon,
@@ -219,6 +220,32 @@ export default function DashboardPage() {
           <StatCard title="Alertas Activas" value={unresolvedAlerts.length} subtitle={`${alerts.length} totales`} icon={BellIcon} color="#ef4444" bg="rgba(239,68,68,0.12)" />
           <StatCard title="Análisis IA" value={metrics?.totalAnalyses ?? 0} subtitle={`${Math.round((metrics?.averageConfidence ?? 0) * 100)}% confianza`} icon={ChartIcon} color="#8b5cf6" bg="rgba(139,92,246,0.12)" />
           <StatCard title="Lecturas" value={sensors.length} subtitle="En esta sesión" icon={ActivityIcon} color="#06b6d4" bg="rgba(6,182,212,0.12)" />
+        </div>
+
+        {/* ── GRÁFICA ── */}
+        <div style={{
+          background: '#111111',
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: '16px',
+          padding: '20px',
+          marginBottom: '20px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <ChartIcon size={16} color="#22c55e" />
+              <h2 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#f1f5f9' }}>
+                Tendencia de Sensores
+              </h2>
+              <div style={{
+                width: '6px', height: '6px', background: '#22c55e',
+                borderRadius: '50%', animation: 'pulse-green 2s infinite',
+              }} />
+            </div>
+            <span style={{ fontSize: '11px', color: '#475569' }}>
+              Últimas 20 lecturas · actualización en vivo
+            </span>
+          </div>
+          <SensorChart sensors={sensors} limit={20} height={220} />
         </div>
 
         {/* Bottom Grid */}
