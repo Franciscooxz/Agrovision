@@ -13,17 +13,19 @@ const generateRefreshToken = (id) => {
 };
 
 const setTokenCookies = (res, accessToken, refreshToken) => {
+  // Use COOKIE_SECURE=true only when serving over HTTPS (not needed for HTTP Docker dev)
+  const isSecure = process.env.COOKIE_SECURE === 'true';
   res.cookie('token', accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: isSecure,
+    sameSite: 'lax',
     maxAge: 15 * 60 * 1000,
   });
   if (refreshToken) {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: isSecure,
+      sameSite: 'lax',
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
   }
@@ -151,8 +153,9 @@ exports.logout = async (req, res) => {
     }
   } catch {}
 
-  res.cookie('token', '', { httpOnly: true, expires: new Date(0) });
-  res.cookie('refreshToken', '', { httpOnly: true, expires: new Date(0) });
+  const isSecure = process.env.COOKIE_SECURE === 'true';
+  res.cookie('token', '', { httpOnly: true, secure: isSecure, sameSite: 'lax', expires: new Date(0) });
+  res.cookie('refreshToken', '', { httpOnly: true, secure: isSecure, sameSite: 'lax', expires: new Date(0) });
   return sendResponse(res, 200, true, 'Sesión cerrada correctamente');
 };
 

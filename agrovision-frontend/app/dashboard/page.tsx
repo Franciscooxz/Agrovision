@@ -144,9 +144,9 @@ export default function DashboardPage() {
         fetch(`${API_URL}/api/alerts`, { credentials: 'include' }),
         fetch(`${API_URL}/api/dashboard/metrics`, { credentials: 'include' }),
       ]);
-      if (sRes.ok) setSensors(await sRes.json());
-      if (aRes.ok) setAlerts(await aRes.json());
-      if (mRes.ok) setMetrics(await mRes.json());
+      if (sRes.ok) { const j = await sRes.json(); setSensors(j?.data ?? j); }
+      if (aRes.ok) { const j = await aRes.json(); setAlerts(j?.data ?? j); }
+      if (mRes.ok) { const j = await mRes.json(); setMetrics(j?.data ?? j); }
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {

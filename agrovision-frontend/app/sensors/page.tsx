@@ -42,7 +42,7 @@ export default function SensorsPage() {
     const fetch_ = async () => {
       try {
         const res = await fetch(`${API_URL}/api/sensors`, { credentials: 'include' });
-        if (res.ok) setSensors(await res.json());
+        if (res.ok) { const j = await res.json(); setSensors(j?.data ?? j); }
       } catch (err) {
         console.error(err);
       } finally {

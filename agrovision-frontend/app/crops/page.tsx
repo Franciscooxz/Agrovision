@@ -43,7 +43,7 @@ export default function CropsPage() {
   const fetchCrops = async () => {
     try {
       const res = await fetch(`${API_URL}/api/crops`, { credentials: 'include' });
-      if (res.ok) setCrops(await res.json());
+      if (res.ok) { const j = await res.json(); setCrops(j?.data ?? j); }
     } catch (err) {
       console.error(err);
     } finally {
@@ -69,7 +69,8 @@ export default function CropsPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Error al crear cultivo');
-      setCrops((prev) => [data.crop, ...prev]);
+      // sendResponse wraps data: { crop, analysis } → unwrap to get the crop object
+      setCrops((prev) => [data?.data?.crop ?? data?.data, ...prev]);
       setForm({ name: '', type: '', location: '' });
       setShowForm(false);
     } catch (err: unknown) {

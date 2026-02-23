@@ -1,19 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { LeafIcon, EyeIcon, EyeOffIcon } from '@/components/icons';
+import { LeafIcon, EyeIcon, EyeOffIcon, CheckIcon } from '@/components/icons';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
-export default function LoginPage() {
+function LoginForm() {
   const { login } = useAuth();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [justRegistered, setJustRegistered] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('registered') === 'true') {
+      setJustRegistered(true);
+    }
+  }, [searchParams]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,6 +99,42 @@ export default function LoginPage() {
             Monitorea tus cultivos en tiempo real
           </p>
         </div>
+
+        {/* Success banner after registration */}
+        {justRegistered && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            background: 'rgba(34,197,94,0.1)',
+            border: '1px solid rgba(34,197,94,0.25)',
+            borderRadius: '12px',
+            padding: '12px 16px',
+            marginBottom: '16px',
+            animation: 'fadeIn 0.3s ease-out',
+          }}>
+            <div style={{
+              width: '24px',
+              height: '24px',
+              background: 'rgba(34,197,94,0.2)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}>
+              <CheckIcon size={14} color="#22c55e" />
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#22c55e' }}>
+                ¡Cuenta creada exitosamente!
+              </p>
+              <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#86efac' }}>
+                Inicia sesión con tus credenciales.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Card */}
         <div style={{
@@ -176,5 +221,23 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div style={{
+        minHeight: '100vh',
+        background: '#0a0a0a',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <div style={{ width: '32px', height: '32px', border: '2px solid #22c55e', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -44,7 +44,7 @@ export default function AlertsPage() {
     const fetch_ = async () => {
       try {
         const res = await fetch(`${API_URL}/api/alerts`, { credentials: 'include' });
-        if (res.ok) setAlerts(await res.json());
+        if (res.ok) { const j = await res.json(); setAlerts(j?.data ?? j); }
       } catch (err) {
         console.error(err);
       } finally {

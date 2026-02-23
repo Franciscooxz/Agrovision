@@ -63,8 +63,8 @@ export default function AdminPage() {
         fetch(`${API_URL}/api/admin/users`, { credentials: 'include' }),
         fetch(`${API_URL}/api/admin/stats`, { credentials: 'include' }),
       ]);
-      if (usersRes.ok) setUsers(await usersRes.json());
-      if (statsRes.ok) setStats(await statsRes.json());
+      if (usersRes.ok) { const j = await usersRes.json(); setUsers(j?.data ?? j); }
+      if (statsRes.ok) { const j = await statsRes.json(); setStats(j?.data ?? j); }
     } catch (err) {
       console.error(err);
     } finally {
@@ -86,7 +86,8 @@ export default function AdminPage() {
         body: JSON.stringify({ role }),
       });
       if (res.ok) {
-        const updated = await res.json();
+        const j = await res.json();
+        const updated = j?.data ?? j;
         setUsers((prev) => prev.map((u) => u._id === id ? { ...u, role: updated.role } : u));
       }
     } catch (err) {
@@ -103,7 +104,8 @@ export default function AdminPage() {
         body: JSON.stringify({ plan }),
       });
       if (res.ok) {
-        const updated = await res.json();
+        const j = await res.json();
+        const updated = j?.data ?? j;
         setUsers((prev) => prev.map((u) => u._id === id ? { ...u, plan: updated.plan } : u));
       }
     } catch (err) {
