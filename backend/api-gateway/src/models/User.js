@@ -27,8 +27,12 @@ const userSchema = new mongoose.Schema(
     plan: {
       type: String,
       enum: ['FREE', 'PRO'],
-      default: 'FREE'
-    }
+      default: 'FREE',
+    },
+    refreshToken: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );
